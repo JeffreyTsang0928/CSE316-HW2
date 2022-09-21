@@ -153,11 +153,33 @@ body {
   cursor: not-allowed;
 }
 
-.playlister-song, .playlister-song-dragged-to { 
+.playlister-song, .playlister-song-dragged-to{ 
   display:flex;
   align-items: center;
   font-size: 24pt;
   height:20%;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 25px;
+  background-color: var(--swatch-complement);
+  color: white;
+}
+
+.playlister-song:hover{
+  background-color: var(--swatch-contrast);
+}
+
+.playlister-song-is-dragging {
+  display:flex;
+  align-items: center;
+  font-size: 24pt;
+  height:20%;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 25px;
+  background-color: var(--swatch-contrast);
+  color: white;
+  opacity: 0.5;
 }
 
 input {

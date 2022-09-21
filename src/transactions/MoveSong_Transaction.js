@@ -18,6 +18,7 @@ export default class MoveSong_Transaction extends jsTPS_Transaction {
 
     doTransaction() {
         this.app.moveSong(this.oldSongIndex, this.newSongIndex);
+        console.log("moving song: " + this.oldSongIndex + "to" + this.newSongIndex);
     }
     
     undoTransaction() {

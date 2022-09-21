@@ -33,7 +33,7 @@ export default class SongCard extends React.Component {
     handleDragLeave = (event) => {
         event.preventDefault();
         this.setState(prevState => ({
-            isDragging: prevState.isDragging,
+            isDragging: false,
             draggedTo: false
         }));
     }
@@ -63,7 +63,10 @@ export default class SongCard extends React.Component {
         let num = this.getItemNum();
         console.log("num: " + num);
         let itemClass = "playlister-song";
-        if (this.state.draggedTo) {
+        if(this.state.isDragging){
+            itemClass = "playlister-song-is-dragging";
+        }
+        else if (this.state.draggedTo) {
             itemClass = "playlister-song-dragged-to";
         }
         return (
