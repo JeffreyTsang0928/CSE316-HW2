@@ -135,6 +135,16 @@ body {
   font-size:18pt;
 }
 
+.remove-song-button{
+  float:right;
+  font-size:24pt;
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
+  box-shadow: 2px 4px #888888;
+  border-radius: 5px;
+}
+
 .playlister-button, .playlister-button-disabled {
   font-size:36pt;
   border-width: 0px;
@@ -154,7 +164,7 @@ body {
 }
 
 .playlister-song, .playlister-song-dragged-to{ 
-  display:flex;
+  display:block;
   align-items: center;
   font-size: 24pt;
   height:20%;
@@ -162,11 +172,12 @@ body {
   padding: 20px;
   border-radius: 25px;
   background-color: var(--swatch-complement);
-  color: white;
+  color: black;
 }
 
 .playlister-song:hover{
   background-color: var(--swatch-contrast);
+  color: white;
 }
 
 .playlister-song-is-dragging {

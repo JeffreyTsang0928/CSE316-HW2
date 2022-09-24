@@ -1,36 +1,37 @@
 import React, { Component } from 'react';
 
-export default class EditSongModal extends Component{
-    render() {
-        const { listKeyPair, editSongCallback, hideEditSongModalCallback } = this.props;
-        let name = "";
-        if (listKeyPair) {
-            name = listKeyPair.name;
+export default class DeleteSongModal extends Component {
+    render(){
+        const { song, deleteSongCallback, hideDeleteSongModalCallback } = this.props;
+        
+        let songTitle="";
+        if(song){
+            songTitle=song.title; //we need the song title for the modal box
         }
         return (
             <div 
                 class="modal" 
-                id="delete-list-modal" 
+                id="delete-song-modal" 
                 data-animation="slideInOutLeft">
-                    <div class="modal-root" id='verify-delete-list-root'>
+                    <div class="modal-root" id='verify-delete-song-root'>
                         <div class="modal-north">
-                            Delete playlist?
+                            Remove Song?
                         </div>
                         <div class="modal-center">
                             <div class="modal-center-content">
-                                Are you sure you wish to permanently delete the {name} playlist?
+                                Are you sure you wish to permanently remove {songTitle} from the playlist?
                             </div>
                         </div>
                         <div class="modal-south">
                             <input type="button" 
-                                id="delete-list-confirm-button" 
+                                id="delete-song-confirm-button" 
                                 class="modal-button" 
-                                onClick={deleteListCallback}
+                                onClick={deleteSongCallback}
                                 value='Confirm' />
                             <input type="button" 
-                                id="delete-list-cancel-button" 
+                                id="delete-song-cancel-button" 
                                 class="modal-button" 
-                                onClick={hideDeleteListModalCallback}
+                                onClick={hideDeleteSongModalCallback}
                                 value='Cancel' />
                         </div>
                     </div>
