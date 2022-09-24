@@ -238,8 +238,15 @@ class App extends React.Component {
         }
         this.setStateWithUpdatedList(list);
     }
-    deleteSong(song){
-        
+    deleteSong = ()=>{
+        //make sure we are working with the list in question:
+        console.log("current list: " + this.state.currentList.name);
+        console.log("index we want to delete: " + this.state.songMarkedForDeletion);
+        let list = this.state.currentList;
+        let index = this.state.songMarkedForDeletion;
+        list.songs.splice(index,1);
+        this.setStateWithUpdatedList(list);
+        this.hideDeleteSongModal();
     }
     // THIS FUNCTION ADDS A MoveSong_Transaction TO THE TRANSACTION STACK
     addMoveSongTransaction = (start, end) => {
@@ -274,17 +281,21 @@ class App extends React.Component {
             // PROMPT THE USER
             this.showDeleteListModal();
         });
+        console.log("Marked list: " + this.state.listKeyPairMarkedForDeletion);
     }
 
-    markSongForDeletion = (song) => {
+    markSongForDeletion = (songIndex) => {
+        console.log("attempting to change the app state such that song at index: " + songIndex + " is marked for deletion!");
         this.setState(prevState => ({
             currentList: prevState.currentList,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             sessionData: prevState.sessionData,
-            songMarkedForDeletion : song
+            songMarkedForDeletion : songIndex
         }), ()=>{
             this.showDeleteSongModal();
-        })
+        });
+        console.log("Marking song at index: " + this.state.songMarkedForDeletion + " for deletion!");
+
 
     }
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
@@ -337,7 +348,9 @@ class App extends React.Component {
                 />
                 <PlaylistCards
                     currentList={this.state.currentList}
-                    moveSongCallback={this.addMoveSongTransaction} />
+                    moveSongCallback={this.addMoveSongTransaction} 
+                    deleteSongCallback={this.markSongForDeletion}
+                />
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteListModal
@@ -346,7 +359,8 @@ class App extends React.Component {
                     deleteListCallback={this.deleteMarkedList}
                 />
                 <DeleteSongModal
-                    song={this.state.songMarkedForDeletion}
+                    currList={this.state.currentList}
+                    song={this.state.songMarkedForDeletion} //should pass the index to the modal... but i dont think anything is there
                     hideDeleteSongModalCallback={this.hideDeleteSongModal}
                     deleteSongCallback={this.deleteSong}
                 />
