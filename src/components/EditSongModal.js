@@ -9,6 +9,26 @@ export default class EditSongModal extends Component{
             inputArtist: "",
             inputYT: ""
         }
+
+        let songName=props.currList[props.song].title;
+        let inputArtist=props.currList[props.song].artist;
+        let inputYT=props.currList[props.song].youTubeId;
+        if(props.currList && props.song!=null){
+            // this.state ={
+            //     inputSongName : currList[song].title,
+            //     inputArtist : currList[song].artist,
+            //     inputYT : currList[song].youTubeId
+            // }
+            console.log("props currlist and props song is not null!??!?!!");
+         }   
+    }
+
+    setDefaultValues(songName, artistName, ytId){
+        this.setState(prevState => ({
+            inputSongName : songName,
+            inputArtist : artistName,
+            inputYT : ytId
+        }))
     }
 
     handleUpdateSongName = (event) => {
@@ -79,7 +99,7 @@ export default class EditSongModal extends Component{
                                 type="text" 
                                 onChange={this.handleUpdateSongName}
                                 onBlur={this.handleUpdateSongName}
-                                defaultValue={songName} 
+                                defaultValue={this.state.inputSongName} 
                             />
                             <div 
                                 id="artist-prompt" 
