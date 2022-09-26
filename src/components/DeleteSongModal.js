@@ -6,7 +6,7 @@ export default class DeleteSongModal extends Component {
         
         let songName="";
         console.log("value of song passed to delete modal: " + song);
-        if(song!=null && currList){
+        if(song!=null && currList!=null){
             songName=currList.songs[song].title;
         }
         return (

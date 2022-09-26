@@ -211,8 +211,8 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList : list,
             sessionData : this.state.sessionData,
-            songMarkedForDeletion : prevState.songMarkedForDeletion,
-            songMarkedForEdit : prevState.songMarkedForEdit
+            songMarkedForDeletion : null,
+            songMarkedForEdit : null
         }), () => {
             // UPDATING THE LIST IN PERMANENT STORAGE
             // IS AN AFTER EFFECT
@@ -255,6 +255,17 @@ class App extends React.Component {
         list.songs.splice(index,1);
         this.setStateWithUpdatedList(list);
         this.hideDeleteSongModal();
+    }
+    addSong = () =>{
+        let list = this.state.currentList;
+        let newSong = {
+            "title" : "Unknown",
+            "artist" : "???",
+            "youTubeId" : "dQw4w9WgXcQ"
+        }
+        let songIndex = this.getPlaylistSize();
+        list.songs.splice(songIndex, 0 , newSong);
+        this.setStateWithUpdatedList(list);
     }
     editSong = (newSongName, newArtist, newYtId)=>{ //hold on, we need to pass parameters to this so that the information is sent
         let list = this.state.currentList;
@@ -389,6 +400,7 @@ class App extends React.Component {
                     undoCallback={this.undo}
                     redoCallback={this.redo}
                     closeCallback={this.closeCurrentList}
+                    addSongCallback={this.addSong}
                 />
                 <PlaylistCards
                     currentList={this.state.currentList}
