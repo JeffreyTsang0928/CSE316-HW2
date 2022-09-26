@@ -4,56 +4,91 @@ export default class EditSongModal extends Component{
     constructor(props) {
         super(props);
  
-        this.state = {
-            inputSongName: "",
-            inputArtist: "",
-            inputYT: ""
+         this.state ={
+            stateSongName : "",
+            stateArtist : "",
+            stateYT : ""
         }
-
-        let songName=props.currList[props.song].title;
-        let inputArtist=props.currList[props.song].artist;
-        let inputYT=props.currList[props.song].youTubeId;
-        if(props.currList && props.song!=null){
-            // this.state ={
-            //     inputSongName : currList[song].title,
-            //     inputArtist : currList[song].artist,
-            //     inputYT : currList[song].youTubeId
-            // }
-            console.log("props currlist and props song is not null!??!?!!");
-         }   
+        this.titleInput=React.createRef();
+        this.artistInput=React.createRef();
+        this.YtInput=React.createRef();
     }
 
-    setDefaultValues(songName, artistName, ytId){
-        this.setState(prevState => ({
-            inputSongName : songName,
-            inputArtist : artistName,
-            inputYT : ytId
-        }))
+    // componentDidMount(){
+    //     if(this.props.song !=null && this.props.currList){
+    //         this.setState(prevState => ({
+    //             stateSongName : this.props.currList[this.props.song].title,
+    //             stateArtist : this.props.currList[this.props.song].artist,
+    //             stateYT : this.props.currList[this.props.song].youTubeId
+    //         }))
+    //         console.log("just changed the state with didmount!");
+    //     }
+    // }
+
+    componentDidUpdate = (prevProps) =>{
+        if(this.props.song !== prevProps.song && this.props.currList){
+            let list=this.props.currList;
+            let songIndex=this.props.song;
+            if(list!=null && songIndex!=null){
+                // console.log("list and songindex arent null!");
+                console.log("setting state to:" + list.songs[songIndex].title)
+                this.setState(prevState => ({
+                    stateSongName : list.songs[songIndex].title,
+                    stateArtist : list.songs[songIndex].artist,
+                    stateYT : list.songs[songIndex].youTubeId
+                }))
+            }
+            
+        } //IF SONG CHANGED
     }
 
     handleUpdateSongName = (event) => {
-        this.setState({ inputSongName: event.target.value });
+        event.preventDefault();
+        this.setState(prevState => ({
+            stateSongName : event.target.value,
+            stateArtist : prevState.stateArtist,
+            stateYT : prevState.stateYT
+        }));
         console.log("updating song name...");
     }
     handleUpdateArtist= (event) => {
-        this.setState({ inputArtist: event.target.value });
+        event.preventDefault();
+        this.setState(prevState => ({
+            stateSongName : prevState.stateSongName,
+            stateArtist : event.target.value,
+            stateYT : prevState.stateYT
+        }));
         console.log("updating artist...");
     }
     handleUpdateYT = (event) => {
-        this.setState({ inputYT: event.target.value });
+        event.preventDefault();
+        this.setState(prevState => ({
+            stateSongName : prevState.stateSongName,
+            stateArtist : prevState.stateArtist,
+            stateYT : event.target.value
+        }));
         console.log("updating yt id...");
     }
 
     handleCancel = (event) =>{
-        this.setState({inputSongName: "",
-        inputArtist: "",
-        inputYT: ""})
+        event.preventDefault();
+        // this.setState({inputSongName: "",
+        // inputArtist: "",
+        // inputYT: ""})
         this.props.hideEditSongModalCallback();
         console.log("cancelling!");
     }
 
     handleEdit = (event) =>{
-        this.props.editSongCallback(this.state.inputSongName, this.state.inputArtist, this.state.inputYT);
+        event.preventDefault();
+        console.log("handling edit with: " + this.titleInput);
+        let inputSongName=this.titleInput.current.value;
+        let inputArtist=this.artistInput.current.value;
+        let inputYT=this.YtInput.current.value;
+        this.props.editSongCallback(inputSongName, inputArtist, inputYT);
+        // this.setState({inputSongName: "",
+        // inputArtist: "",
+        // inputYT: ""}) 
     }
 
 
@@ -97,9 +132,11 @@ export default class EditSongModal extends Component{
                                 id="edit-song-modal-title-textfield" 
                                 class='modal-textfield' 
                                 type="text" 
+                                ref={this.titleInput}
+                                value={this.state.stateSongName}
                                 onChange={this.handleUpdateSongName}
                                 onBlur={this.handleUpdateSongName}
-                                defaultValue={this.state.inputSongName} 
+                                // defaultValue={this.state.inputSongName || songName}
                             />
                             <div 
                                 id="artist-prompt" 
@@ -110,9 +147,10 @@ export default class EditSongModal extends Component{
                                 id="edit-song-modal-artist-textfield" 
                                 class='modal-textfield' 
                                 type="text" 
+                                ref={this.artistInput}
+                                value={this.state.stateArtist}
                                 onChange={this.handleUpdateArtist}
                                 onBlur={this.handleUpdateArtist}
-                                defaultValue={artist} 
                             />
                             <div 
                                 id="you-tube-id-prompt" 
@@ -123,9 +161,11 @@ export default class EditSongModal extends Component{
                                 id="edit-song-modal-youTubeId-textfield" 
                                 class='modal-textfield' 
                                 type="text" 
+                                ref={this.YtInput}
+                                value={this.state.stateYT}
                                 onChange={this.handleUpdateYT}
                                 onBlur={this.handleUpdateYT}
-                                defaultValue={youTubeId} 
+                                
                             />
                         </div>
                         <div class="modal-south">
