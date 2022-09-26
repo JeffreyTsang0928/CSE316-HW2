@@ -6,35 +6,57 @@ export default class SongCard extends React.Component {
 
         this.state = {
             isDragging: false,
-            draggedTo: false
+            draggedTo: false,
+            editActive: false,
         }
     }
+
+    handleClick = (event) => {
+        if (event.detail === 2) {
+            this.setState(prevState => ({
+                isDragging: prevState.isDragging,
+                draggedTo: prevState.draggedTo,
+                editActive: true
+            }));
+
+            event.stopPropagation();
+            let songIndex=this.getItemNum()-1;
+            this.props.editCallback(songIndex); //PASSES THE SONG INDEX TO CALLBACK
+            console.log("passing songnum: " + songIndex);
+        }
+    }
+
+
     handleDragStart = (event) => {
         event.dataTransfer.setData("song", event.target.id);
         this.setState(prevState => ({
             isDragging: true,
-            draggedTo: prevState.draggedTo
+            draggedTo: prevState.draggedTo,
+            editActive: prevState.editActive
         }));
     }
     handleDragOver = (event) => {
         event.preventDefault();
         this.setState(prevState => ({
             isDragging: prevState.isDragging,
-            draggedTo: true
+            draggedTo: true,
+            editActive: prevState.editActive
         }));
     }
     handleDragEnter = (event) => {
         event.preventDefault();
         this.setState(prevState => ({
             isDragging: prevState.isDragging,
-            draggedTo: true
+            draggedTo: true,
+            editActive: prevState.editActive
         }));
     }
     handleDragLeave = (event) => {
         event.preventDefault();
         this.setState(prevState => ({
             isDragging: false,
-            draggedTo: false
+            draggedTo: false,
+            editActive: prevState.editActive
         }));
     }
     handleDrop = (event) => {
@@ -47,7 +69,8 @@ export default class SongCard extends React.Component {
         
         this.setState(prevState => ({
             isDragging: false,
-            draggedTo: false
+            draggedTo: false,
+            editActive: prevState.editActive
         }));
 
         // ASK THE MODEL TO MOVE THE DATA
@@ -85,6 +108,7 @@ export default class SongCard extends React.Component {
                 onDragEnter={this.handleDragEnter}
                 onDragLeave={this.handleDragLeave}
                 onDrop={this.handleDrop}
+                onClick={this.handleClick}
                 draggable="true"
             >
                 {num}.

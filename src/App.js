@@ -19,6 +19,7 @@ import SidebarHeading from './components/SidebarHeading.js';
 import SidebarList from './components/SidebarList.js';
 import Statusbar from './components/Statusbar.js';
 import DeleteSongModal from './components/DeleteSongModal';
+import EditSongModal from './components/EditSongModal';
 
 class App extends React.Component {
     constructor(props) {
@@ -38,7 +39,8 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : null,
             currentList : null,
             sessionData : loadedSessionData,
-            songMarkedForDeletion : null
+            songMarkedForDeletion : null,
+            songMarkedForEdit : null
         }
     }
     sortKeyNamePairsByName = (keyNamePairs) => {
@@ -80,7 +82,8 @@ class App extends React.Component {
                 counter: prevState.sessionData.counter + 1,
                 keyNamePairs: updatedPairs
             },
-            songMarkedForDeletion : prevState.songMarkedForDeletion
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit
         }), () => {
             // PUTTING THIS NEW LIST IN PERMANENT STORAGE
             // IS AN AFTER EFFECT
@@ -118,7 +121,8 @@ class App extends React.Component {
                 counter: prevState.sessionData.counter - 1,
                 keyNamePairs: newKeyNamePairs
             },
-            songMarkedForDeletion : prevState.songMarkedForDeletion
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit
         }), () => {
             // DELETING THE LIST FROM PERMANENT STORAGE
             // IS AN AFTER EFFECT
@@ -162,7 +166,8 @@ class App extends React.Component {
                 counter: prevState.sessionData.counter,
                 keyNamePairs: newKeyNamePairs
             },
-            songMarkedForDeletion : prevState.songMarkedForDeletion
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit
         }), () => {
             // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
             // THE TRANSACTION STACK IS CLEARED
@@ -179,7 +184,8 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList: newCurrentList,
             sessionData: this.state.sessionData,
-            songMarkedForDeletion : prevState.songMarkedForDeletion
+            songMarkedForDeletion : null,
+            songMarkedForEdit : null
         }), () => {
             // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
             // THE TRANSACTION STACK IS CLEARED
@@ -192,7 +198,8 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList: null,
             sessionData: this.state.sessionData,
-            songMarkedForDeletion : prevState.songMarkedForDeletion
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit
         }), () => {
             // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
             // THE TRANSACTION STACK IS CLEARED
@@ -204,7 +211,8 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             currentList : list,
             sessionData : this.state.sessionData,
-            songMarkedForDeletion : prevState.songMarkedForDeletion
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit
         }), () => {
             // UPDATING THE LIST IN PERMANENT STORAGE
             // IS AN AFTER EFFECT
@@ -248,6 +256,21 @@ class App extends React.Component {
         this.setStateWithUpdatedList(list);
         this.hideDeleteSongModal();
     }
+    editSong = (newSongName, newArtist, newYtId)=>{ //hold on, we need to pass parameters to this so that the information is sent
+        let list = this.state.currentList;
+        let index = this.state.songMarkedForEdit;
+
+        list.songs[index].title=newSongName;
+        list.songs[index].artist=newArtist;
+        list.songs[index].youtubeId=newYtId;
+
+        console.log("set the new title to :" + newSongName);
+        console.log("set the new artist to: " + newArtist);
+        console.log("set the new ytID to: " + newYtId);
+
+        this.setStateWithUpdatedList(list);
+        this.hideEditSongModal();
+    }
     // THIS FUNCTION ADDS A MoveSong_Transaction TO THE TRANSACTION STACK
     addMoveSongTransaction = (start, end) => {
         let transaction = new MoveSong_Transaction(this, start, end);
@@ -276,7 +299,8 @@ class App extends React.Component {
             currentList: prevState.currentList,
             listKeyPairMarkedForDeletion : keyPair,
             sessionData: prevState.sessionData,
-            songMarkedForDeletion : prevState.songMarkedForDeletion
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit
         }), () => {
             // PROMPT THE USER
             this.showDeleteListModal();
@@ -290,13 +314,24 @@ class App extends React.Component {
             currentList: prevState.currentList,
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             sessionData: prevState.sessionData,
-            songMarkedForDeletion : songIndex
+            songMarkedForDeletion : songIndex,
+            songMarkedForEdit : prevState.songMarkedForEdit
         }), ()=>{
             this.showDeleteSongModal();
         });
         console.log("Marking song at index: " + this.state.songMarkedForDeletion + " for deletion!");
+    }
 
-
+    markSongForEdit = (songIndex) => {
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            sessionData: prevState.sessionData,
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : songIndex
+        }), ()=>{
+            this.showEditSongModal();
+        })
     }
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
     // TO SEE IF THEY REALLY WANT TO DELETE THE LIST
@@ -307,6 +342,15 @@ class App extends React.Component {
     // THIS FUNCTION IS FOR HIDING THE MODAL
     hideDeleteListModal() {
         let modal = document.getElementById("delete-list-modal");
+        modal.classList.remove("is-visible");
+    }
+
+    showEditSongModal(){
+        let modal = document.getElementById("edit-song-modal");
+        modal.classList.add("is-visible");
+    }
+    hideEditSongModal(){
+        let modal = document.getElementById("edit-song-modal");
         modal.classList.remove("is-visible");
     }
 
@@ -350,6 +394,7 @@ class App extends React.Component {
                     currentList={this.state.currentList}
                     moveSongCallback={this.addMoveSongTransaction} 
                     deleteSongCallback={this.markSongForDeletion}
+                    editSongCallback={this.markSongForEdit}
                 />
                 <Statusbar 
                     currentList={this.state.currentList} />
@@ -363,6 +408,12 @@ class App extends React.Component {
                     song={this.state.songMarkedForDeletion} //should pass the index to the modal... but i dont think anything is there
                     hideDeleteSongModalCallback={this.hideDeleteSongModal}
                     deleteSongCallback={this.deleteSong}
+                />
+                <EditSongModal
+                    currList={this.state.currentList}
+                    song={this.state.songMarkedForEdit}
+                    hideEditSongModalCallback={this.hideEditSongModal}
+                    editSongCallback={this.editSong}
                 />
             </div>
         );
