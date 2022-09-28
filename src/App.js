@@ -21,6 +21,7 @@ import Statusbar from './components/Statusbar.js';
 import DeleteSongModal from './components/DeleteSongModal';
 import EditSongModal from './components/EditSongModal';
 import DeleteSong_Transaction from './transactions/DeleteSong_Transaction';
+import EditSong_Transaction from './transactions/EditSong_Transaction';
 
 class App extends React.Component {
     constructor(props) {
@@ -295,20 +296,35 @@ class App extends React.Component {
         let list = this.state.currentList;
         let index = this.state.songMarkedForEdit;
 
-        list.songs[index].title=newSongName;
-        list.songs[index].artist=newArtist;
-        list.songs[index].youtubeId=newYtId;
+        let newSong = {
+            "title" : newSongName,
+            "artist" : newArtist,
+            "youTubeId" : newYtId
+        }
 
-        console.log("set the new title to :" + newSongName);
-        console.log("set the new artist to: " + newArtist);
-        console.log("set the new ytID to: " + newYtId);
+        let oldSong = {
+            "title" : list.songs[index].title,
+            "artist" : list.songs[index].artist,
+            "youTubeId" : list.songs[index].youtubeId
+        }
 
-        this.setStateWithUpdatedList(list);
+        this.addEditSongTransaction(index, newSong, oldSong);        
         this.hideEditSongModal();
+    }
+
+    editSongAtIndex = (index, newSong) =>{
+        let list = this.state.currentList;
+        list.songs[index] = newSong;
+        this.setStateWithUpdatedList(list);
     }
     // THIS FUNCTION ADDS A MoveSong_Transaction TO THE TRANSACTION STACK
     addMoveSongTransaction = (start, end) => {
         let transaction = new MoveSong_Transaction(this, start, end);
+        this.tps.addTransaction(transaction);
+    }
+
+    addEditSongTransaction = (index, newSong, oldSong) =>{
+        let transaction = new EditSong_Transaction(this, index, newSong, oldSong);
         this.tps.addTransaction(transaction);
     }
 
