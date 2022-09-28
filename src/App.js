@@ -20,6 +20,7 @@ import SidebarList from './components/SidebarList.js';
 import Statusbar from './components/Statusbar.js';
 import DeleteSongModal from './components/DeleteSongModal';
 import EditSongModal from './components/EditSongModal';
+import DeleteSong_Transaction from './transactions/DeleteSong_Transaction';
 
 class App extends React.Component {
     constructor(props) {
@@ -261,10 +262,24 @@ class App extends React.Component {
         console.log("index we want to delete: " + this.state.songMarkedForDeletion);
         let list = this.state.currentList;
         let index = this.state.songMarkedForDeletion;
-        list.songs.splice(index,1);
-        this.setStateWithUpdatedList(list);
+        // list.songs.splice(index,1);
+        // this.setStateWithUpdatedList(list);
+        this.addDeleteSongTransaction(index, list.songs[index]);
         this.hideDeleteSongModal();
     }
+
+    addSongAtIndex = (index, newSong) =>{
+        let list=this.state.currentList;
+        list.songs.splice(index, 0, newSong);
+        this.setStateWithUpdatedList(list);
+    }
+    
+    deleteSongAtIndex = (index) =>{
+        let list=this.state.currentList;
+        list.songs.splice(index,1);
+        this.setStateWithUpdatedList(list);
+    }
+
     addSong = () =>{
         let list = this.state.currentList;
         let newSong = {
@@ -294,6 +309,11 @@ class App extends React.Component {
     // THIS FUNCTION ADDS A MoveSong_Transaction TO THE TRANSACTION STACK
     addMoveSongTransaction = (start, end) => {
         let transaction = new MoveSong_Transaction(this, start, end);
+        this.tps.addTransaction(transaction);
+    }
+
+    addDeleteSongTransaction = (songIndex, song) =>{
+        let transaction = new DeleteSong_Transaction(this, songIndex, song);
         this.tps.addTransaction(transaction);
     }
     // THIS FUNCTION BEGINS THE PROCESS OF PERFORMING AN UNDO
