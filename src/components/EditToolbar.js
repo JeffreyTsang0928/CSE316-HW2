@@ -3,18 +3,6 @@ import React from "react";
 export default class EditToolbar extends React.Component {
 
 
-    handleKeyPress = (event) =>{
-        console.log("detected keypress");
-        event.preventDefault();
-        let charCode = String.fromCharCode(event.which).toLowerCase();
-        if(charCode === 'z' && (event.ctrlKey || event.metaKey)){
-            console.log("control+z detected!");
-        //     if(this.props.canUndo){
-
-        //     }
-        }
-    }
-
     render() {
         const { canAddSong, canUndo, canRedo, canClose, 
                 undoCallback, redoCallback, closeCallback, addSongCallback} = this.props;

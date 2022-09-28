@@ -26,7 +26,7 @@ export default class EditSongModal extends Component{
     // }
 
     componentDidUpdate = (prevProps) =>{
-        if((this.props.song !== prevProps.song)&& this.props.currList){
+        if(this.props.song !== prevProps.song && this.props.currList){
             let list=this.props.currList;
             let songIndex=this.props.song;
             if(list!=null && songIndex!=null){
@@ -43,7 +43,6 @@ export default class EditSongModal extends Component{
     }
 
     handleUpdateSongName = (event) => {
-        console.log("updating song name:");
         event.preventDefault();
         this.setState(prevState => ({
             stateSongName : event.target.value,
@@ -62,7 +61,7 @@ export default class EditSongModal extends Component{
         console.log("updating artist...");
     }
     handleUpdateYT = (event) => {
-        // event.preventDefault();
+        event.preventDefault();
         this.setState(prevState => ({
             stateSongName : prevState.stateSongName,
             stateArtist : prevState.stateArtist,
@@ -132,12 +131,12 @@ export default class EditSongModal extends Component{
                             <input 
                                 id="edit-song-modal-title-textfield" 
                                 class='modal-textfield' 
-                                type='text'
+                                type="text" 
                                 ref={this.titleInput}
-                                // defaultValue={this.state.stateSongName}
+                                value={this.state.stateSongName}
                                 onChange={this.handleUpdateSongName}
                                 onBlur={this.handleUpdateSongName}
-                                
+                                // defaultValue={this.state.inputSongName || songName}
                             />
                             <div 
                                 id="artist-prompt" 
@@ -149,7 +148,7 @@ export default class EditSongModal extends Component{
                                 class='modal-textfield' 
                                 type="text" 
                                 ref={this.artistInput}
-                                // defaultValue={this.state.stateArtist}
+                                value={this.state.stateArtist}
                                 onChange={this.handleUpdateArtist}
                                 onBlur={this.handleUpdateArtist}
                             />
@@ -163,7 +162,7 @@ export default class EditSongModal extends Component{
                                 class='modal-textfield' 
                                 type="text" 
                                 ref={this.YtInput}
-                                // defaultValue={this.state.stateYT}
+                                value={this.state.stateYT}
                                 onChange={this.handleUpdateYT}
                                 onBlur={this.handleUpdateYT}
                                 

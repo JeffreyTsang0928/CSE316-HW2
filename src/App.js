@@ -420,13 +420,13 @@ class App extends React.Component {
     }
 
     handleKeyPress = (event) =>{ //This handles the undo/redo key combinations
-        event.preventDefault();
+        // event.preventDefault();
         let charCode = String.fromCharCode(event.which).toLowerCase();
         if(charCode === 'z' && (event.ctrlKey || event.metaKey)){
             console.log("control+z detected!");
             this.undo();
         }
-        else if(charCode === 'y' && (event.ctrlKey || event.metaKey)){
+        if(charCode === 'y' && (event.ctrlKey || event.metaKey)){
             console.log("control+y detected!");
             this.redo();
         }
