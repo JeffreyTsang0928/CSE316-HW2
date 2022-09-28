@@ -22,6 +22,7 @@ import DeleteSongModal from './components/DeleteSongModal';
 import EditSongModal from './components/EditSongModal';
 import DeleteSong_Transaction from './transactions/DeleteSong_Transaction';
 import EditSong_Transaction from './transactions/EditSong_Transaction';
+import AddSong_Transaction from './transactions/AddSong_Transaction';
 
 class App extends React.Component {
     constructor(props) {
@@ -282,15 +283,16 @@ class App extends React.Component {
     }
 
     addSong = () =>{
-        let list = this.state.currentList;
+        // let list = this.state.currentList;
         let newSong = {
             "title" : "Unknown",
             "artist" : "???",
             "youTubeId" : "dQw4w9WgXcQ"
         }
         let songIndex = this.getPlaylistSize();
-        list.songs.splice(songIndex, 0 , newSong);
-        this.setStateWithUpdatedList(list);
+        this.addAddSongTransaction(songIndex, newSong);
+        // list.songs.splice(songIndex, 0 , newSong);
+        // this.setStateWithUpdatedList(list);
     }
     editSong = (newSongName, newArtist, newYtId)=>{ //hold on, we need to pass parameters to this so that the information is sent
         let list = this.state.currentList;
@@ -325,6 +327,11 @@ class App extends React.Component {
 
     addEditSongTransaction = (index, newSong, oldSong) =>{
         let transaction = new EditSong_Transaction(this, index, newSong, oldSong);
+        this.tps.addTransaction(transaction);
+    }
+
+    addAddSongTransaction = (songIndex, song) =>{
+        let transaction = new AddSong_Transaction(this, songIndex, song);
         this.tps.addTransaction(transaction);
     }
 
