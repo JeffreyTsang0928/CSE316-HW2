@@ -287,6 +287,22 @@ span {
   font-size: 20pt;
 }
 
+.toolbar-button{
+  font-size:24pt;
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
+  box-shadow: 2px 4px #888888;
+  border-radius: 5px;
+}
+
+.toolbar-button-disabled {
+  opacity: 0.5;
+}
+.toolbar-button-disabled:hover {
+  color: var(--swatch-neutral);
+}
+
 #title-prompt {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
@@ -332,6 +348,7 @@ span {
 .modal p + p {
   margin-top: 1rem;
 }
+
 
 /* ANIMATIONS
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

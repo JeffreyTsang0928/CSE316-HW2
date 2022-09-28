@@ -43,7 +43,8 @@ class App extends React.Component {
             currentList : null,
             sessionData : loadedSessionData,
             songMarkedForDeletion : null,
-            songMarkedForEdit : null
+            songMarkedForEdit : null, 
+            modalVisible: false
         }
     }
 
@@ -310,8 +311,16 @@ class App extends React.Component {
             "youTubeId" : list.songs[index].youtubeId
         }
 
-        this.addEditSongTransaction(index, newSong, oldSong);        
-        this.hideEditSongModal();
+        this.addEditSongTransaction(index, newSong, oldSong); 
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            sessionData: prevState.sessionData,
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit,
+            modalVisible : true
+        }), () =>  {   
+        this.hideEditSongModal() });
     }
 
     editSongAtIndex = (index, newSong) =>{
@@ -363,7 +372,8 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : keyPair,
             sessionData: prevState.sessionData,
             songMarkedForDeletion : prevState.songMarkedForDeletion,
-            songMarkedForEdit : prevState.songMarkedForEdit
+            songMarkedForEdit : prevState.songMarkedForEdit,
+            modalVisible : true
         }), () => {
             // PROMPT THE USER
             this.showDeleteListModal();
@@ -378,7 +388,8 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             sessionData: prevState.sessionData,
             songMarkedForDeletion : songIndex,
-            songMarkedForEdit : prevState.songMarkedForEdit
+            songMarkedForEdit : prevState.songMarkedForEdit,
+            modalVisible : true
         }), ()=>{
             this.showDeleteSongModal();
         });
@@ -391,7 +402,8 @@ class App extends React.Component {
             listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
             sessionData: prevState.sessionData,
             songMarkedForDeletion : prevState.songMarkedForDeletion,
-            songMarkedForEdit : songIndex
+            songMarkedForEdit : songIndex,
+            modalVisible : true
         }), ()=>{
             this.showEditSongModal();
         })
@@ -403,52 +415,88 @@ class App extends React.Component {
         modal.classList.add("is-visible");
     }
     // THIS FUNCTION IS FOR HIDING THE MODAL
-    hideDeleteListModal() {
-        let modal = document.getElementById("delete-list-modal");
-        modal.classList.remove("is-visible");
+    hideDeleteListModal = () => {
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            sessionData: prevState.sessionData,
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit,
+            modalVisible : false
+        }), ()=>{
+            let modal = document.getElementById("delete-list-modal");
+            modal.classList.remove("is-visible");
+        })
     }
 
     showEditSongModal(){
         let modal = document.getElementById("edit-song-modal");
         modal.classList.add("is-visible");
     }
-    hideEditSongModal(){
-        let modal = document.getElementById("edit-song-modal");
-        modal.classList.remove("is-visible");
+    hideEditSongModal = () =>{
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            sessionData: prevState.sessionData,
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit,
+            modalVisible : false
+        }), ()=>{
+            let modal = document.getElementById("edit-song-modal");
+            modal.classList.remove("is-visible");
+        })
     }
 
     showDeleteSongModal(){
         let modal=document.getElementById("delete-song-modal");
         modal.classList.add("is-visible");
     }
-    hideDeleteSongModal(){
-        let modal=document.getElementById("delete-song-modal");
-        modal.classList.remove("is-visible");
+    hideDeleteSongModal = () =>{
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            listKeyPairMarkedForDeletion : prevState.listKeyPairMarkedForDeletion,
+            sessionData: prevState.sessionData,
+            songMarkedForDeletion : prevState.songMarkedForDeletion,
+            songMarkedForEdit : prevState.songMarkedForEdit,
+            modalVisible : false
+        }), ()=>{
+            let modal=document.getElementById("delete-song-modal");
+            modal.classList.remove("is-visible");
+        })
     }
 
     handleKeyPress = (event) =>{ //This handles the undo/redo key combinations
         // event.preventDefault();
         let charCode = String.fromCharCode(event.which).toLowerCase();
-        if(charCode === 'z' && (event.ctrlKey || event.metaKey)){
+        let delSongModal=document.getElementById("delete-song-modal").classList.contains("is-visible");
+        let editModal=document.getElementById("edit-song-modal").classList.contains("is-visible");
+        let delListModal=document.getElementById("delete-list-modal").classList.contains("is-visible");
+        if(charCode === 'z' && (event.ctrlKey || event.metaKey) && !delSongModal && !editModal && !delListModal){
             console.log("control+z detected!");
             this.undo();
         }
-        if(charCode === 'y' && (event.ctrlKey || event.metaKey)){
+        if(charCode === 'y' && (event.ctrlKey || event.metaKey) && !delSongModal && !editModal && !delListModal){
             console.log("control+y detected!");
             this.redo();
         }
     }
 
     render() {
-        let canAddSong = this.state.currentList !== null;
-        let canUndo = this.tps.hasTransactionToUndo();
-        let canRedo = this.tps.hasTransactionToRedo();
-        let canClose = this.state.currentList !== null;
+        let canAddSong = this.state.currentList !== null && !this.state.modalVisible;
+        let canUndo = this.tps.hasTransactionToUndo() && this.state.currentList!=null && !this.state.modalVisible;
+        let canRedo = this.tps.hasTransactionToRedo() && this.state.currentList!=null;
+        let canClose = this.state.currentList !== null && !this.state.modalVisible;
+        let canAddList = !this.state.modalVisible;
+
+        // let delSongModalVisible=document.getElementById("delete-song-modal").classList.contains("is-visible");
+        // let editModalVisible=document.getElementById("edit-song-modal").classList.contains("is-visible");
+        // let delListModalVisible=document.getElementById("delete-list-modal").classList.contains("is-visible");
         return (
             <div id="root" onKeyDown={this.handleKeyPress}>
                 <Banner />
                 <SidebarHeading
                     createNewListCallback={this.createNewList}
+                    canAddNewList={canAddList}
                 />
                 <SidebarList
                     currentList={this.state.currentList}

@@ -99,6 +99,9 @@ export default class SongCard extends React.Component {
         else if (this.state.draggedTo) {
             itemClass = "playlister-song-dragged-to";
         }
+        if(!song){
+            console.log("undefined????");
+        }
         return (
             <div
                 id={'song-' + num}
