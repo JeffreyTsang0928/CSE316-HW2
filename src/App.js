@@ -43,6 +43,15 @@ class App extends React.Component {
             songMarkedForEdit : null
         }
     }
+
+    componentDidMount(){
+        document.addEventListener("keydown", this.handleKeyPress, false);
+    }
+    componentWillUnmount(){
+        document.removeEventListener("keydown", this.handleKeyPress, false);
+    }
+
+
     sortKeyNamePairsByName = (keyNamePairs) => {
         keyNamePairs.sort((keyPair1, keyPair2) => {
             // GET THE LISTS
@@ -374,13 +383,26 @@ class App extends React.Component {
         modal.classList.remove("is-visible");
     }
 
+    handleKeyPress = (event) =>{ //This handles the undo/redo key combinations
+        event.preventDefault();
+        let charCode = String.fromCharCode(event.which).toLowerCase();
+        if(charCode === 'z' && (event.ctrlKey || event.metaKey)){
+            console.log("control+z detected!");
+            this.undo();
+        }
+        else if(charCode === 'y' && (event.ctrlKey || event.metaKey)){
+            console.log("control+y detected!");
+            this.redo();
+        }
+    }
+
     render() {
         let canAddSong = this.state.currentList !== null;
         let canUndo = this.tps.hasTransactionToUndo();
         let canRedo = this.tps.hasTransactionToRedo();
         let canClose = this.state.currentList !== null;
         return (
-            <div id="root">
+            <div id="root" onKeyDown={this.handleKeyPress}>
                 <Banner />
                 <SidebarHeading
                     createNewListCallback={this.createNewList}
