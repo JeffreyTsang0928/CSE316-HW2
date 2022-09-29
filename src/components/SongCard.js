@@ -63,18 +63,29 @@ export default class SongCard extends React.Component {
         event.preventDefault();
         let target = event.target;
         let targetId = target.id;
-        targetId = targetId.substring(target.id.indexOf("-") + 1);
-        let sourceId = event.dataTransfer.getData("song");
-        sourceId = sourceId.substring(sourceId.indexOf("-") + 1);
+        if(targetId !== ""){ //TEMPORARY FIX FROM PIAZZA
+            console.log("target id is not null, performing drop!");
+            targetId = targetId.substring(target.id.indexOf("-") + 1);
+            let sourceId = event.dataTransfer.getData("song");
+            sourceId = sourceId.substring(sourceId.indexOf("-") + 1);
         
-        this.setState(prevState => ({
-            isDragging: false,
-            draggedTo: false,
-            editActive: prevState.editActive
-        }));
+            this.setState(prevState => ({
+                isDragging: false,
+                draggedTo: false,
+                editActive: prevState.editActive
+            }));
 
         // ASK THE MODEL TO MOVE THE DATA
         this.props.moveCallback(sourceId, targetId);
+        }
+        else{
+            console.log("target id is null, we are not dropping it here.");
+            this.setState(prevState => ({
+                isDragging: false,
+                draggedTo: false,
+                editActive: prevState.editActive
+            }));
+        }
     }
 
     getItemNum = () => {
@@ -115,7 +126,8 @@ export default class SongCard extends React.Component {
                 draggable="true"
             >
                 {num}.
-                <a href={'https://www.youtube.com/watch?v=' + song.youTubeId}>
+                <a href={'https://www.youtube.com/watch?v=' + song.youTubeId}
+                draggable="false">
                     {song.title} by {song.artist}
                 </a>
 
